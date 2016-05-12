@@ -1,0 +1,57 @@
+select {
+  font-family: Dosis, sans-serif;
+  font-size: 22px;
+  padding-left: 12px;
+  border: 3px solid;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 55px;
+  transition: all 0.2s ease-in-out;
+
+  -webkit-appearance: none;
+}
+
+.select__Login {
+  margin-bottom: 10px;
+}
+
+.select--container {
+  display: inline-flex;
+}
+
+.select--acton {
+  background-color: #91C6F5;
+  border-color: #749ec4;
+  color: #577793;
+}
+
+.select--baxter {
+  background-color: #fcbc9f;
+  border-color: #ca967f;
+  color: #97715f;
+}
+
+.select--clive {
+  background-color: #B4FAFB;
+  border-color: #90c8c9;
+  color: #6c9697;
+}
+
+.select--darwin {
+  background-color: #D19DFF;
+  border-color: #a77ecc;
+  color: #7d5e99;
+}
+
+.select--houseman {
+  background-color: #FF9191;
+  border-color: #cc7474;
+  color: #995757;
+}
+
+.select--webb {
+  background-color: #FFF3A6;
+  border-color: #ccc285;
+  color: #999264;
+}

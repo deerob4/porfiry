@@ -1,0 +1,31 @@
+h3 {
+  font-family: Dosis, sans-serif;
+  font-size: 24px;
+  font-weight: normal;
+}
+
+.load-quiz-blocks {
+  overflow-y: auto;
+  max-height: 483px;
+}
+
+.load-quiz-blocks div:first-child h3 {
+  margin-top: 15px;
+}
+
+.load-quiz-blocks h3 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.load-quiz-blocks div:not(:last-child) {
+  margin-bottom: 23px;
+  border-bottom: 3px solid #749ec4;
+  padding-bottom: 30px;
+}
+
+.load-quiz-blocks p {
+  font-size: 20px;
+  margin-top: 8px;
+  margin-bottom: 13px;
+}

@@ -1,0 +1,60 @@
+h1, h2, h3, h4, h5, h6, p {
+  transition: all 0.2s ease-in-out;
+}
+
+.centre {
+  text-align: center;
+}
+
+.heading--primary--acton {
+  color: #719bd2;
+}
+
+.heading--primary--baxter {
+  color: #d6a087;
+}
+
+.heading--primary--clive {
+  color: #79d3d4;
+}
+
+.heading--primary--darwin {
+  color: #AA74C1;
+}
+
+.heading--primary--houseman {
+  color: #E87070;
+}
+
+.heading--primary--webb {
+  color: #E2D792;
+}
+
+
+.heading--secondary--acton {
+  color: #80B8E2;
+}
+
+.heading--secondary--baxter {
+  color: #e3a98f;
+}
+
+.heading--secondary--clive {
+  color: #80dfe0;
+}
+
+.heading--secondary--darwin {
+  color: #C984E6;
+}
+
+.heading--secondary--houseman {
+  color: #FD8484;
+}
+
+.heading--secondary--webb {
+  color: #EADA78;
+}
+
+.heading__Settings {
+  margin-bottom: 25px;
+}

@@ -1,0 +1,98 @@
+/* Base button */
+.button {
+  font-family: Dosis, sans-serif;
+
+  cursor: pointer;
+  transition: all .2s ease-in-out;
+  text-align: center;
+
+  border: 3px solid;
+  border-radius: 4px;
+}
+
+.button:active {
+  -webkit-transform: scale(.6) !important;
+          transform: scale(.6) !important;
+
+  opacity: .8;
+}
+
+/* Button sizes */
+.button--size-large {
+  height: 60px;
+  font-size: 25px;
+}
+
+.button--size-small {
+  width: 135px;
+  height: 50px;
+  font-size: 22px;
+  margin-right: 10px;
+}
+
+.button__Login {
+  width: 50%;
+  margin: 0 5px;
+}
+
+.button__Create {
+  width: 200px;
+  margin-right: 7px;
+}
+
+/*Button container*/
+.button-container {
+  display: flex;
+}
+
+.button-container--create {
+  margin-right: 0;
+}
+
+.button-container:not(.button-container--login) .button:last-child {
+  margin-right: 0;
+}
+
+.button-container--login {
+  margin-top: 16px;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+/* House colours */
+.button--house-acton {
+  color: #7a8e99;
+  border-color: #a3bdcc;
+  background-color: #ccecff;
+}
+
+.button--house-baxter {
+  color: #998873;
+  border-color: #ccb599;
+  background-color: #ffe2bf;
+}
+
+.button--house-clive {
+  color: #889999;
+  border-color: #b5cccc;
+  background-color: #E2FFFF;
+}
+
+.button--house-darwin {
+  color: #8e7c99;
+  border-color: #bda5cc;
+  background-color: #ecceff;
+}
+
+.button--house-houseman {
+  color: #997c7c;
+  border-color: #cca6a6;
+  background-color: #ffcfcf;
+}
+
+.button--house-webb {
+  color: #99998b;
+  border-color: #ccccb9;
+  background-color: #ffffe7;
+}
+

@@ -1,0 +1,41 @@
+html, body, #root, .main {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.flexbox-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.create__inner {
+  width: 1024px;
+}
+
+h1, .heading__h1 {
+  font-family: 'Dosis', sans-serif;
+  font-size: 70px;
+  font-weight: normal;
+  margin-bottom: -20px;
+  margin-top: 0;
+}
+
+h2 {
+  font-family: Dosis, sans-serif;
+  font-weight: normal;
+  font-size: 50px;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+p {
+  font-family: 'Dosis', sans-serif;
+  font-size: 26px;
+}
+
+h1 .centre, h2 .centre, h3 .centre, h4 .centre, h5 .centre, h6 .centre, p .centre {
+  text-align: center;
+}

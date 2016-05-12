@@ -1,0 +1,15 @@
+.form__Schedule {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+}
+
+.form__Schedule .field {
+  width: 50%;
+}
+
+.form__Schedule .field:not(:last-of-type) {
+  padding-right: 10px;
+}
