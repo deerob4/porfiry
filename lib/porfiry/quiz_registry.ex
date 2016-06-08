@@ -1,4 +1,9 @@
 defmodule Porfiry.QuizRegistry do
+  @moduledoc """
+  Stores a list of quizzes that are currently scheduled, and contains methods
+  to operate on them.
+  """
+
   use GenServer
   import Ecto.Query, only: [from: 2]
   alias Porfiry.{Repo, Quiz, QuizRegistry, QuizServer}
@@ -81,7 +86,7 @@ defmodule Porfiry.QuizRegistry do
 
     {:reply, in_progress, quizzes}
   end
-  
+
   def handle_cast({:schedule_quiz, quiz_id}, quizzes) do
     {:ok, pid} = QuizServer.start_link(quiz_id)
 
