@@ -1,11 +1,13 @@
 defmodule Porfiry.QuizServer do
-  use GenServer
+  @moduledoc """
+  Spawns an individual quiz and manages its state.
+  """
 
+  use GenServer
   import Ecto.Query, only: [from: 2]
   import Porfiry.Endpoint, only: [broadcast!: 3]
   import Process, only: [send_after: 3]
   import Timex.DateTime, only: [now: 0]
-
   alias Porfiry.{Repo, Quiz, QuizServer, QuizRegistry, QuizView, Countdown}
 
   require Logger
