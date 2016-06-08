@@ -1,6 +1,6 @@
 defmodule Porfiry.QuizServer do
   @moduledoc """
-  Spawns an individual quiz and manages its state.
+  Spawns an individual quiz and manages its state.
   """
 
   use GenServer
