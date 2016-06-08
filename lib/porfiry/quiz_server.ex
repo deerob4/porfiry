@@ -9,7 +9,6 @@ defmodule Porfiry.QuizServer do
   import Process, only: [send_after: 3]
   import Timex.DateTime, only: [now: 0]
   alias Porfiry.{Repo, Quiz, QuizServer, QuizRegistry, QuizView, Countdown}
-
   require Logger
 
   defstruct id: nil, start_date: nil, quiz_data: nil, in_progress?: false, counting_down?: false
