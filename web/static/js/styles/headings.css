@@ -6,8 +6,19 @@ h1, h2, h3, h4, h5, h6, p {
   text-align: center;
 }
 
+.heading--primary-player {
+  font-size: 68px;
+  margin-bottom: 10px;
+}
+
+.heading--secondary-player {
+  font-size: 30px;
+  margin-bottom: 15px;
+}
+
+
 .heading--primary--acton {
-  color: #719bd2;
+  color: #CC7C6E;
 }
 
 .heading--primary--baxter {
@@ -32,7 +43,7 @@ h1, h2, h3, h4, h5, h6, p {
 
 
 .heading--secondary--acton {
-  color: #80B8E2;
+  color: #E68C7B;
 }
 
 .heading--secondary--baxter {

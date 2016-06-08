@@ -3,7 +3,8 @@ import * as constants from 'constants';
 let defaultState = {
   isSaving: false,
   saveSucceeded: true,
-  saveFailed: false
+  saveFailed: false,
+  error: ''
 };
 
 function api(state = defaultState, action) {
@@ -17,16 +18,18 @@ function api(state = defaultState, action) {
 
     case constants.SAVING_SUCCEEDED:
       return {
-        ...state,
         isSaving: false,
-        saveSucceeded: true
+        saveSucceeded: true,
+        saveFailed: false,
+        error: ''
       };
 
     case constants.SAVING_FAILED:
       return {
         isSaving: false,
         saveFailed: true,
-        saveSucceeded:false
+        saveSucceeded:false,
+        error: action.error
       };
 
     default:

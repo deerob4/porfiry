@@ -4,7 +4,7 @@ import { HOUSES } from 'constants';
 import findLetterTerm from 'utils/findLetterTerm';
 
 const QuestionAnswers = props => {
-  const { answers, currentQuestion, editAnswer, house, markAnswer } = props;
+  const { answers, currentQuestion, correctAnswer, editAnswer, house, markAnswer } = props;
 
   return (
     <div>
@@ -14,7 +14,7 @@ const QuestionAnswers = props => {
             <Answer key={i}
                     id={answer.id}
                     body={answer.body}
-                    correct={answer.correct}
+                    correct={answer.id === correctAnswer}
                     editAnswer={editAnswer}
                     house={house}
                     letter={findLetterTerm(i)}

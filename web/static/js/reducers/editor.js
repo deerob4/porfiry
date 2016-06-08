@@ -5,7 +5,7 @@ import nextId from 'utils/nextId';
 function id(state = null, action) {
   switch (action.type) {
     case constants.LOAD_QUIZ:
-      return action.quiz.id;
+      return action.payload.id;
 
     default:
       return state;
@@ -15,10 +15,10 @@ function id(state = null, action) {
 function currentQuestion(state = 0, action) {
   switch (action.type) {
     case constants.LOAD_QUIZ:
-      return action.quiz.questions[0].id;
+      return action.payload.questions[0].id;
 
     case constants.CHANGE_QUESTION:
-      return action.questionId;
+      return action.payload;
 
     default:
       return state;
@@ -28,17 +28,17 @@ function currentQuestion(state = 0, action) {
 function settings(state = {}, action) {
   switch (action.type) {
     case constants.LOAD_QUIZ:
-      return action.quiz.settings;
+      return action.payload.settings;
 
     case constants.UPDATE_SCHEDULE:
       return {
         ...state,
-        startDate: action.schedule.startDate,
-        isScheduled: action.schedule.isScheduled
+        startDate: action.payload.startDate,
+        isScheduled: action.payload.isScheduled
       };
 
     case constants.UPDATE_SETTINGS:
-      return action.settings;
+      return action.payload;
 
     default:
       return state;
@@ -48,23 +48,31 @@ function settings(state = {}, action) {
 function questions(state = [], action) {
   switch (action.type) {
     case constants.LOAD_QUIZ:
-      return action.quiz.questions.sort(q => q.id);
+      return action.payload.questions.sort(q => q.id);
 
     case constants.ADD_QUESTION:
       return [...state, {
-        id: action.question.id,
-        body: action.question.body
+        id: action.payload.id,
+        body: action.payload.body,
+        correctAnswer: action.payload.correctAnswer
       }];
 
     case constants.EDIT_QUESTION:
       return state.map(question =>
-        question.id === action.questionId ?
-          { ...question, body: action.body } :
-        question
+        question.id === action.payload.questionId
+          ? { ...question, body: action.payload.body }
+          :  question
+      );
+
+    case constants.MARK_ANSWER_AS_CORRECT:
+      return state.map(question =>
+        question.id === action.payload.questionId
+          ? { ...question, correctAnswer: action.payload.correctAnswer }
+          : question
       );
 
     case constants.DELETE_QUESTION:
-      return state.filter(question => question.id !== action.questionId);
+      return state.filter(question => question.id !== action.payload);
 
     default:
       return state;
@@ -74,31 +82,20 @@ function questions(state = [], action) {
 function answers(state = [], action) {
   switch (action.type) {
     case constants.LOAD_QUIZ:
-      return action.quiz.answers.sort(a => a.id);
+      return action.payload.answers.sort(a => a.id);
 
     case constants.ADD_QUESTION:
-      return [...state, ...action.question.answers];
+      return [...state, ...action.payload.answers];
 
     case constants.EDIT_ANSWER:
       return state.map(answer =>
-        answer.id === action.answerId ?
-          { ...answer, body: action.body } :
-        answer
-      );
-
-    case constants.MARK_ANSWER_AS_CORRECT:
-      return state.map(answer =>
-        // Mark currently correct answer as incorrect.
-        answer.questionId === action.questionId && answer.correct ?
-          { ...answer, correct: false } :
-        // Mark selected answer as correct.
-        answer.id === action.answerId ?
-          { ...answer, correct: true } :
-        answer
+        answer.id === action.answerId
+          ? { ...answer, body: action.payload.body }
+          :  answer
       );
 
     case constants.DELETE_QUESTION:
-      return state.filter(answer => answer.questionId !== action.questionId);
+      return state.filter(answer => answer.questionId !== action.payload);
 
     default:
       return state;

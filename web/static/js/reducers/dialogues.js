@@ -43,7 +43,7 @@ function scheduleQuizIsOpen(state = false, action) {
 function loadedQuizzes(state = [], action) {
   switch (action.type) {
     case constants.RECEIVE_QUIZZES:
-      return action.quizzes;
+      return action.payload;
 
     default:
       return state;

@@ -1,0 +1,11 @@
+.countdown {
+  text-align: center;
+}
+
+.countdown h1 {
+  margin-bottom: 15px;
+}
+
+.countdown h2 {
+  margin-bottom: 0;
+}

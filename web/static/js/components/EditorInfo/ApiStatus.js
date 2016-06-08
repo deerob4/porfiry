@@ -8,7 +8,7 @@ const ApiStatus = props => {
     props.saveSucceeded
       ? { icon: 'check', message: 'All changes saved!' } :
     props.saveFailed
-      ? { icon: 'exclamation-circle', message: 'Error saving' } : '';
+      ? { icon: 'exclamation-circle', message: props.error } : '';
 
   return (
     <span>
@@ -19,6 +19,7 @@ const ApiStatus = props => {
 };
 
 ApiStatus.propTypes = {
+  error: PropTypes.string.isRequired,
   isSaving: PropTypes.bool.isRequired,
   saveFailed: PropTypes.bool.isRequired,
   saveSucceeded: PropTypes.bool.isRequired

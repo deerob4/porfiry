@@ -7,13 +7,12 @@ const EditableText = props => (
          defaultValue={props.body}
          onBlur={e => {
            const newBody = trim(e.target.value);
-
            if (newBody.length && newBody !== props.body) {
              props.onBlur(newBody, props.id);
            }
            // Remove any whitespace from input.
            if (e.target.value !== newBody) {
-            e.target.value = newBody;
+             e.target.value = newBody;
            }
          }} />
 );

@@ -23,16 +23,16 @@ let config = {
 
   resolve: {
     alias: {
-      constants: web('js/constants/index.js'),
-      components: web('js/components'),
-      containers: web('js/containers'),
-      reducers: web('js/reducers'),
       actions: web('js/actions'),
+      components: web('js/components'),
+      constants: web('js/constants/index.js'),
+      containers: web('js/containers'),
       layouts: web('js/layouts'),
+      reducers: web('js/reducers'),
       styles: web('js/styles'),
-      views: web('js/views'),
       utils: web('js/utils'),
-      phoenix: __dirname + '/deps/phoenix/web/static/js/phoenix.js'
+      views: web('js/views'),
+      phoenix: join('deps/phoenix/web/static/js/phoenix.js')
     },
     extensions: ['', '.js', '.css'],
     modulesDirectories: ['node_modules']
@@ -58,7 +58,13 @@ let config = {
   },
 
   plugins: [
-    new ExtractTextPlugin('css/app.min.css')
+    new ExtractTextPlugin('css/app.min.css'),
+    // new webpack.DefinePlugin({
+    //   'process.env': {
+    //     NODE_ENV: JSON.stringify('production')
+    //   }
+    // }),
+    new webpack.IgnorePlugin(/^\.\/locale$/, [/moment$/]),
   ],
 
   postcss() {

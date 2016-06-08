@@ -38,7 +38,8 @@ defmodule Porfiry.Mixfile do
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
      {:timex, "~> 2.1.4"},
-     {:timex_ecto, "~> 1.0.4"}]
+     {:timex_ecto, "~> 1.0.4"},
+     {:credo, "~> 0.3", only: [:dev, :test]}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

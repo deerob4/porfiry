@@ -2,6 +2,7 @@ defmodule Porfiry.UserSocket do
   use Phoenix.Socket
 
   ## Channels
+  channel "editors:*", Porfiry.EditorChannel
   channel "quizzes:*", Porfiry.QuizChannel
 
   ## Transports

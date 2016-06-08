@@ -1,7 +1,7 @@
 defmodule Porfiry.QuizController do
   use Porfiry.Web, :controller
 
-  alias Porfiry.{Quiz, Question}
+  alias Porfiry.{Quiz, Question, Answer, DefaultQuiz}
   import Porfiry.QuizRegistry, only: [schedule_quiz: 1, unschedule_quiz: 1]
 
   def index(conn, %{"basic" => "true"}) do
@@ -14,31 +14,36 @@ defmodule Porfiry.QuizController do
 
     render(conn, "basic_index.json", quizzes: quizzes)
   end
+
   def index(conn, _params) do
     quizzes = from(q in Quiz, preload: [questions: :answers]) |> Repo.all
     render(conn, "index.json", quizzes: quizzes)
   end
 
   def create(conn, _params) do
-    default_quiz = Porfiry.DefaultQuiz.get
-
-    settings = Repo.insert!(Quiz.changeset(%Quiz{},
-                            default_quiz.settings))
-
-    question = Map.put(default_quiz.question, :quiz_id, settings.id)
-
-    question_id =
-      %Question{}
-      |> Question.changeset(question)
+    quiz =
+      %Quiz{}
+      |> Quiz.changeset(DefaultQuiz.settings)
       |> Repo.insert!
 
-    Enum.each(default_quiz.answers, fn answer ->
-      Porfiry.AnswerController.create(%{
-        "answer" => Map.put(answer, :question_id, question_id.id)
-      })
-    end)
+    question =
+      %Question{}
+      |> Question.changeset(%{DefaultQuiz.question | quiz_id: quiz.id})
+      |> Repo.insert!
 
-    quiz = Repo.preload(Repo.get_by(Quiz, id: settings.id), questions: :answers)
+    answer =
+      DefaultQuiz.answers
+      |> Enum.map(fn answer ->
+           %Answer{}
+           |> Answer.changeset(%{answer | question_id: question.id})
+           |> Repo.insert!
+         end)
+      |> Enum.map(&(&1.id))
+      |> List.first
+
+    Question.changeset(question, %{correct_answer: answer}) |> Repo.update!
+
+    quiz = Repo.get(Quiz, quiz.id) |> Repo.preload(questions: :answers)
 
     conn
     |> put_status(:created)
@@ -47,40 +52,9 @@ defmodule Porfiry.QuizController do
   end
 
   def show(conn, %{"id" => id}) do
-    quiz = Repo.preload Repo.get!(Quiz, id), questions: :answers
+    quiz = Repo.get!(Quiz, id) |> Repo.preload(questions: :answers)
+
     render(conn, "show.json", quiz: quiz)
-  end
-
-  def update(conn, %{"id" => id, "schedule" => schedule_params}) do
-    id = String.to_integer(id)
-    quiz = Repo.get!(Quiz, id)
-    scheduled? = schedule_params["is_scheduled"]
-    changeset = Quiz.changeset(quiz, schedule_params)
-
-    case Repo.update(changeset) do
-      {:ok, quiz} ->
-        if scheduled?, do: schedule_quiz(id), else: unschedule_quiz(id)
-        render(conn, "show.json", quiz: quiz)
-
-      {:error, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(Porfiry.ChangesetView, "error.json", changeset: changeset)
-    end
-  end
-  def update(conn, %{"id" => id, "quiz" => quiz_params}) do
-    quiz = Repo.get!(Quiz, id)
-    changeset = Quiz.changeset(quiz, quiz_params)
-
-    case Repo.update(changeset) do
-      {:ok, quiz} ->
-        render(conn, "show.json", quiz: quiz)
-
-      {:error, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(Porfiry.ChangesetView, "error.json", changeset: changeset)
-    end
   end
 
   def delete(conn, %{"id" => id}) do

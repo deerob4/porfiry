@@ -2,14 +2,15 @@ defmodule Porfiry.QuizServer do
   use GenServer
 
   import Ecto.Query, only: [from: 2]
-  import Timex.DateTime, only: [now: 0]
-  import Process, only: [send_after: 3]
   import Porfiry.Endpoint, only: [broadcast!: 3]
-  import Timex, only: [shift: 2, diff: 2, before?: 2]
+  import Process, only: [send_after: 3]
+  import Timex.DateTime, only: [now: 0]
 
-  alias Porfiry.{Repo, Quiz, QuizServer, QuizRegistry}
+  alias Porfiry.{Repo, Quiz, QuizServer, QuizRegistry, QuizView, Countdown}
 
-  defstruct id: nil, in_progress?: false, counting_down?: false
+  require Logger
+
+  defstruct id: nil, start_date: nil, quiz_data: nil, in_progress?: false, counting_down?: false
 
   # Client
 
@@ -18,8 +19,8 @@ defmodule Porfiry.QuizServer do
   end
 
   @doc "Returns the state of the quiz running at `pid`."
-  def get_quiz_state(pid) do
-    GenServer.call(pid, :get_quiz_state)
+  def get_state(pid) do
+    GenServer.call(pid, :get_state)
   end
 
   @doc "Stops the quiz running at `pid`."
@@ -30,59 +31,87 @@ defmodule Porfiry.QuizServer do
   # Server
 
   def init(quiz) do
-    send(self, :start_schedules)
-    {:ok, quiz}
-  end
-
-  def handle_call(:get_quiz_state, _from, quiz) do
-    {:reply, quiz, quiz}
-  end
-
-  def handle_info(:start_schedules, quiz) do
     start_date = from(q in Quiz,
                       where: q.id == ^quiz.id,
                       select: q.start_date) |> Repo.one
 
-    # If the quiz has already ended, shutdown the process.
-    if before?(start_date, now), do: send(self, :end_quiz)
+    # ms until the quiz starts.
+    until_quiz = Timex.diff(now, start_date) |> :timer.seconds
+    countdown_started? = Enum.member?(0..1200000, until_quiz)
 
-    begin_quiz = diff(now, start_date) |> :timer.seconds
-    IO.puts begin_quiz
-    if begin_quiz > 0 and begin_quiz <= :timer.minutes(20) do
+    if countdown_started? do
       send(self, :begin_countdown)
     else
-      begin_countdown = begin_quiz - :timer.minutes(20)
-      send_after(self, :begin_countdown, begin_countdown)
+      # Start the countdown 20 minutes before the quiz.
+      until_countdown = until_quiz - 1200000
+      send_after(self, :begin_countdown, until_countdown)
     end
 
-    send_after(self, :begin_quiz, begin_quiz)
+    send_after(self, :begin_quiz, until_quiz)
+
+    {:ok, quiz}
+  end
+
+  def handle_call(:get_state, _from, quiz) do
+    {:reply, quiz, quiz}
+  end
+
+  def handle_info(:begin_countdown, quiz) do
+    Logger.info("Countdown begun for Quiz #{quiz.id}")
+
+    quiz_data = Repo.get(Quiz, quiz.id) |> Repo.preload(questions: :answers)
+    quiz_view = QuizView.render("quiz.json", %{quiz: quiz_data})
+
+    start_date = quiz_data.start_date
+
+    broadcast!("quizzes:lobby", "begin_countdown", %{id: quiz.id,
+                                                     start_date: start_date})
+    send(self, :update_countdown)
+
+    {:noreply, %{quiz | counting_down?: true,
+                        quiz_data: quiz_view,
+                        start_date: start_date}}
+  end
+
+  def handle_info(:update_countdown, quiz) do
+    time_left = Countdown.until_time(quiz.start_date)
+
+    case time_left do
+      %{minutes: -1, seconds: -1} ->
+        false
+
+      %{minutes: _, seconds: _} ->
+        broadcast!("quizzes:#{quiz.id}", "update_countdown", %{time_left: time_left})
+        send_after(self, :update_countdown, 1000)
+    end
 
     {:noreply, quiz}
   end
 
-  def handle_info(:begin_countdown, quiz) do
-    IO.puts :counting_down
-    broadcast! "quizzes:lobby", "begin_countdown", %{quiz_id: quiz.id}
-    {:noreply, %{quiz | counting_down?: true}}
-  end
-
   def handle_info(:begin_quiz, quiz) do
-    IO.puts :quiz_begun
-    # broadcast! "quizzes:" <> quiz.id, "begin_quiz", %{quiz_id: quiz.id}
+    Logger.info("Quiz #{quiz.id} has begun")
+
+    broadcast!("quizzes:#{quiz.id}", "begin_quiz", %{})
+    # send_after(self, :end_quiz, 3000)
+
+    # Prevent new users joining the quiz.
+    broadcast!("quizzes:lobby", "end_quiz", %{})
+
     {:noreply, %{quiz | in_progress?: true,
                         counting_down?: false}}
   end
 
   def handle_info(:end_quiz, quiz) do
+    Logger.info("Quiz #{quiz.id} has ended")
+
     Quiz
     |> Repo.get!(quiz.id)
-    |> Quiz.changeset(%{is_scheduled: false,
-                        start_date: shift(now, weeks: 1)})
+    |> Quiz.changeset(%{is_scheduled: false})
     |> Repo.update!
 
-    # Inform the registry that the quiz has ended,
-    # removing it from the map.
+    # Inform the registry and client that the quiz has ended.
     send(QuizRegistry, {:end_quiz, quiz.id})
+    broadcast!("quizzes:#{quiz.id}", "end_quiz", %{})
 
     {:stop, :normal, %{quiz | in_progress?: false}}
   end

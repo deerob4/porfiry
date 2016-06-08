@@ -13,6 +13,7 @@ defmodule Porfiry.QuestionView do
     %{id: question.id,
       quiz_id: question.quiz_id,
       body: question.body,
+      correct_answer: question.correct_answer,
       answers: Porfiry.Question.show_answers(question.answers)}
   end
 end

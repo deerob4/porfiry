@@ -4,7 +4,7 @@ import * as constants from '../constants';
 function year(state = '7', action) {
   switch (action.type) {
     case constants.CHANGE_YEAR:
-      return action.year;
+      return action.payload;
 
     default:
       return state;
@@ -14,7 +14,7 @@ function year(state = '7', action) {
 function house(state = 'acton', action) {
   switch (action.type) {
     case constants.CHANGE_HOUSE:
-      return action.house;
+      return action.payload;
 
     default:
       return state;

@@ -1,6 +1,7 @@
 html, body, #root, .main {
   height: 100%;
   width: 100%;
+  margin: 0;
   overflow: hidden;
 }
 
@@ -11,8 +12,9 @@ html, body, #root, .main {
   justify-content: center;
 }
 
-.create__inner {
+.inner {
   width: 1024px;
+/*  height: 768px;*/
 }
 
 h1, .heading__h1 {

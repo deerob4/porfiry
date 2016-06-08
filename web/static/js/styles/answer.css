@@ -29,13 +29,16 @@
 }
 
 .answer--acton {
-  border-color: #8ab0cc;
+/*  border-color: #8ab0cc;
   background-color: #acdcff;
-  color: #678499;
+  color: #678499;*/
+  border-color: #6ebecc;
+  background-color: #89EDFF;
+  color: #528e99;
 }
 
 .answer--acton__Input {
-  color: #678499;
+  color: #528e99;
 }
 
 .answer--baxter {
@@ -45,7 +48,8 @@
 }
 
 .answer--baxter__Input {
-  color: #997a63;
+  /*color: #997a63;*/
+  color: #528e99;
 }
 
 .answer--darwin {

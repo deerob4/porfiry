@@ -3,15 +3,16 @@ defmodule Porfiry.Question do
 
   schema "questions" do
     field :body, :string
+    field :correct_answer, :integer
 
     belongs_to :quiz, Porfiry.Quiz
-    has_many :answers, Porfiry.Answer, on_delete: :delete_all
+    has_many :answers, Porfiry.Answer
 
     timestamps
   end
 
   @required_fields ~w(body quiz_id)
-  @optional_fields ~w()
+  @optional_fields ~w(correct_answer)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -27,6 +28,7 @@ defmodule Porfiry.Question do
   def show_question(question) do
     %{id: question.id,
       body: question.body,
+      correctAnswer: question.correct_answer,
       answers: show_answers(question.answers)}
   end
 

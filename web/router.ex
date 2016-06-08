@@ -18,13 +18,12 @@ defmodule Porfiry.Router do
 
     get "/", PageController, :index
     get "/create", PageController, :index
+    get "/play", PageController, :index
   end
 
   scope "/api", Porfiry do
     pipe_through :api
 
     resources "/quizzes", QuizController, except: [:new, :edit]
-    resources "/questions", QuestionController, only: [:create, :update, :show, :delete]
-    resources "/answers", AnswerController, only: [:create, :update, :delete]
   end
 end

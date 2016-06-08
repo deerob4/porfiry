@@ -87,9 +87,10 @@ class ScheduleDialog extends Component {
                 house={house}
                 size="small"
                 onClick={() => {
+                  const { startDate, startTime, isScheduled } = this.state;
                   // Combine the date and time into one.
-                  const date = constructDate(this.state.startDate, this.state.startTime);
-                  updateSchedule(date, this.state.isScheduled);
+                  const date = constructDate(startDate, startTime);
+                  updateSchedule(date, isScheduled);
                   closeDialog();
                 }}>
           Schedule

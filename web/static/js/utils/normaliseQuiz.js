@@ -2,7 +2,8 @@ const normaliseQuiz = quiz => ({
   ...quiz,
   questions: quiz.questions.map(q => ({
     id: q.id,
-    body: q.body
+    body: q.body,
+    correctAnswer: q.correctAnswer
   })).sort(q => q.id),
   answers: quiz.questions.map(q => (
     q.answers.map(a => ({

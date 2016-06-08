@@ -35,6 +35,10 @@
   margin: 0 5px;
 }
 
+.button__Login-join {
+  margin: 0 115px;
+}
+
 .button__Create {
   width: 200px;
   margin-right: 7px;
@@ -60,10 +64,16 @@
 }
 
 /* House colours */
-.button--house-acton {
+/*.button--house-acton {
   color: #7a8e99;
   border-color: #a3bdcc;
   background-color: #ccecff;
+}*/
+
+.button--house-acton {
+  background-color: #FFBAA4;
+  border-color: #cc9583;
+  color: #997062;
 }
 
 .button--house-baxter {

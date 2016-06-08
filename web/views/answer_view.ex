@@ -11,7 +11,6 @@ defmodule Porfiry.AnswerView do
 
   def render("answer.json", %{answer: answer}) do
     %{id: answer.id,
-      body: answer.body,
-      correct: answer.correct}
+      body: answer.body}
   end
 end

@@ -3,14 +3,13 @@ defmodule Porfiry.Answer do
 
   schema "answers" do
     field :body, :string
-    field :correct, :boolean, default: false
 
     belongs_to :question, Porfiry.Question
 
     timestamps
   end
 
-  @required_fields ~w(body correct question_id)
+  @required_fields ~w(body question_id)
   @optional_fields ~w()
 
   @doc """
@@ -27,7 +26,6 @@ defmodule Porfiry.Answer do
   def show_answer(answer) do
     %{id: answer.id,
       questionId: answer.question_id,
-      body: answer.body,
-      correct: answer.correct}
+      body: answer.body}
   end
 end

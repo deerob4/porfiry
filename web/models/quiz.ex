@@ -9,7 +9,7 @@ defmodule Porfiry.Quiz do
     field :special_events, :boolean
     field :is_scheduled, :boolean
 
-    has_many :questions, Porfiry.Question, on_delete: :delete_all
+    has_many :questions, Porfiry.Question
 
     timestamps
   end
@@ -26,11 +26,15 @@ defmodule Porfiry.Quiz do
   end
 
   defp quiz_not_in_past(changeset) do
-    now = Timex.DateTime.now
-    start_date = get_field(changeset, :start_date)
+    if get_change(changeset, :start_date) do
+      now = Timex.DateTime.now
+      start_date = get_field(changeset, :start_date)
 
-    if Timex.before?(start_date, now) do
-      add_error(changeset, :start_date, "Start date is in the past")
+      if Timex.before?(start_date, now) do
+        add_error(changeset, :start_date, "Start date is in the past")
+      else
+        changeset
+      end
     else
       changeset
     end

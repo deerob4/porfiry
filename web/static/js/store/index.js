@@ -6,16 +6,15 @@ import thunk from 'redux-thunk';
 const logger = createLogger({
   predicate: (getState, action ) => (
     action.type !== 'SAVING_IN_PROGRESS'
+    && action.type !== 'UPDATE_COUNTDOWN'
   ),
-  collapsed: (getState, action ) => (
-    action.type === 'SAVING_SUCCEEDED'
-  )
+  collapsed: true
 });
 
 function configureStore(browserHistory) {
   return createStore(
     rootReducer,
-    applyMiddleware(thunk, logger),
+    applyMiddleware(thunk, logger)
   );
 }
 

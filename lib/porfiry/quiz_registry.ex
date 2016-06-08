@@ -1,10 +1,9 @@
 defmodule Porfiry.QuizRegistry do
   use GenServer
-
   import Ecto.Query, only: [from: 2]
   alias Porfiry.{Repo, Quiz, QuizRegistry, QuizServer}
 
-  defstruct pid: nil
+  defstruct id: nil, pid: nil
 
   # Client
 
@@ -13,8 +12,18 @@ defmodule Porfiry.QuizRegistry do
   end
 
   @doc "Returns all saved quizzes."
-  def show_quizzes do
-    GenServer.call(__MODULE__, :show_quizzes)
+  def get_all do
+    GenServer.call(__MODULE__, :get_all)
+  end
+
+  @doc "Returns all quizzes that are counting down."
+  def get_counting_down do
+    GenServer.call(__MODULE__, :get_counting_down)
+  end
+
+  @doc "Returns all quizzes that are in progress."
+  def get_in_progress do
+    GenServer.call(__MODULE__, :get_in_progress)
   end
 
   @doc "Returns a specific quiz by `quiz_id`."
@@ -37,38 +46,61 @@ defmodule Porfiry.QuizRegistry do
   @doc "Retrieves all quizzes and sets the keys."
   def init(_) do
     schedules =
-      from(q in Quiz,
-           where: q.is_scheduled,
-           select: %{id: q.id})
+      from(q in Quiz, where: q.is_scheduled, select: %{id: q.id})
       |> Repo.all
       |> Enum.map(fn quiz ->
         {:ok, pid} = QuizServer.start_link(quiz.id)
-        {quiz.id, %QuizRegistry{pid: pid}}
+        %QuizRegistry{id: quiz.id, pid: pid}
       end)
-      |> Map.new
 
     {:ok, schedules}
   end
 
-  def handle_call(:show_quizzes, _from, quizzes) do
+  def handle_call(:get_all, _from, quizzes) do
     {:reply, quizzes, quizzes}
   end
 
   def handle_call({:get_quiz, quiz_id}, _from, quizzes) do
-    {:reply, quizzes[quiz_id].pid, quizzes}
+    {:reply, get_pid(quiz_id, quizzes), quizzes}
   end
 
+  def handle_call(:get_counting_down, _from, quizzes) do
+    counting_down =
+      quizzes
+      |> Enum.map(&QuizServer.get_state(&1.pid))
+      |> Enum.filter(&(&1.counting_down?))
+
+    {:reply, counting_down, quizzes}
+  end
+
+  def handle_call(:get_in_progress, _from, quizzes) do
+    in_progress =
+      quizzes
+      |> Enum.map(&QuizServer.get_state(&1.pid))
+      |> Enum.filter(&(&1.in_progress?))
+
+    {:reply, in_progress, quizzes}
+  end
+  
   def handle_cast({:schedule_quiz, quiz_id}, quizzes) do
     {:ok, pid} = QuizServer.start_link(quiz_id)
-    {:noreply, Map.put(quizzes, quiz_id, %QuizRegistry{pid: pid})}
+
+    {:noreply, quizzes ++ [%QuizRegistry{id: quiz_id, pid: pid}]}
   end
 
   def handle_cast({:unschedule_quiz, quiz_id}, quizzes) do
-    QuizServer.stop(quizzes[quiz_id].pid)
-    {:noreply, Map.delete(quizzes, quiz_id)}
+    QuizServer.stop get_pid(quiz_id, quizzes)
+
+    {:noreply, Enum.filter(quizzes, &(&1.id !== quiz_id))}
   end
 
   def handle_info({:end_quiz, quiz_id}, quizzes) do
-    {:noreply, Map.delete(quizzes, quiz_id)}
+    {:noreply, Enum.filter(quizzes, &(&1.id !== quiz_id))}
+  end
+
+  defp get_pid(quiz_id, quizzes) do
+    quizzes
+    |> Enum.find(&(&1.id == quiz_id))
+    |> Map.get(:pid)
   end
 end

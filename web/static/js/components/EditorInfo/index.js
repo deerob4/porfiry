@@ -4,7 +4,7 @@ import CurrentQuestion from './CurrentQuestion';
 import QuizLength from './QuizLength';
 import ApiStatus from './ApiStatus';
 
-const QuizInfo = props => {
+const EditorInfo = props => {
   const { api, currentQuestion, house, questionLength, questions,  } = props;
   return (
     <p className={`heading--secondary--${house}`}>
@@ -15,7 +15,7 @@ const QuizInfo = props => {
   );
 };
 
-QuizInfo.propTypes = {
+EditorInfo.propTypes = {
   api: PropTypes.object.isRequired,
   currentQuestion: PropTypes.number.isRequired,
   house: PropTypes.oneOf(HOUSES).isRequired,
@@ -23,4 +23,4 @@ QuizInfo.propTypes = {
   questions: PropTypes.array.isRequired
 };
 
-export default QuizInfo;
+export default EditorInfo;

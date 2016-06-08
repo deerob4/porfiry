@@ -38,7 +38,7 @@ config :phoenix, :stacktrace_depth, 20
 config :porfiry, Porfiry.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "dee",
-  password: "",
+  password: "70153590",
   database: "porfiry_dev",
   hostname: "localhost",
   pool_size: 10

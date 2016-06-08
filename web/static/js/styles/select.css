@@ -20,10 +20,16 @@ select {
   display: inline-flex;
 }
 
-.select--acton {
+/*.select--acton {
   background-color: #91C6F5;
   border-color: #749ec4;
   color: #577793;
+}*/
+
+.select--acton {
+  background-color: #FF9B89;
+  border-color: #cc7c6e;
+  color: #995d52;
 }
 
 .select--baxter {
