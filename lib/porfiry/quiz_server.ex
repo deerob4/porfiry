@@ -15,6 +15,7 @@ defmodule Porfiry.QuizServer do
 
   # Client
 
+  @doc "Start a new quiz server with an id of `quiz_id`."
   def start_link(quiz_id) do
     GenServer.start_link(__MODULE__, %QuizServer{id: quiz_id})
   end
