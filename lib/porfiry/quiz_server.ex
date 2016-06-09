@@ -45,7 +45,7 @@ defmodule Porfiry.QuizServer do
       send(self, :begin_countdown)
     else
       # Start the countdown 20 minutes before the quiz.
-      until_countdown = until_quiz - 1200000
+      until_countdown = until_quiz - :timer.minutes(20)
       send_after(self, :begin_countdown, until_countdown)
     end
 
@@ -94,7 +94,7 @@ defmodule Porfiry.QuizServer do
     Logger.info("Quiz #{quiz.id} has begun")
 
     broadcast!("quizzes:#{quiz.id}", "begin_quiz", %{})
-    # send_after(self, :end_quiz, 3000)
+    send_after(self, :end_quiz, 3000)
 
     # Prevent new users joining the quiz.
     broadcast!("quizzes:lobby", "end_quiz", %{})
