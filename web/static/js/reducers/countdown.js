@@ -1,5 +1,4 @@
 import * as constants from '../constants';
-import { combineReducers } from 'redux';
 
 const countdownState = {
   id: null,

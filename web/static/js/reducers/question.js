@@ -1,18 +1,18 @@
 import * as constants from '../constants';
 
-const quizState = {
-  question: 'Who is the current Queen of England?',
+const questionState = {
+  body: 'Who is the current Queen of England?',
   answers: [{body: 'hey'}, {body: 'you'}, {body: 'pikachu'}],
   correctAnswer: null,
   selectedAnswer: null,
-  remaining: null,
+  progress: 1,
   hasPeeked: false,
 };
 
-function quiz(state = quizState, action) {
+function question(state = questionState, action) {
   switch (action.type) {
     case constants.UPDATE_QUESTION_TIMER:
-      return { ...state, remaining: action.payload };
+      return { ...state, progress: action.payload };
 
     case constants.RECEIVE_QUESTION:
       return {
@@ -32,4 +32,4 @@ function quiz(state = quizState, action) {
   }
 }
 
-export default quiz;
+export default question;

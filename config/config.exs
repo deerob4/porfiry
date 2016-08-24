@@ -5,6 +5,10 @@
 # is restricted to this project.
 use Mix.Config
 
+# General application configuration
+config :porfiry,
+  ecto_repos: [Porfiry.Repo]
+
 # Configures the endpoint
 config :porfiry, Porfiry.Endpoint,
   url: [host: "localhost"],
@@ -27,3 +31,4 @@ import_config "#{Mix.env}.exs"
 config :phoenix, :generators,
   migration: true,
   binary_id: false
+

@@ -1,0 +1,12 @@
+.lobby {
+  -webkit-animation: rotation 6s infinite linear;
+}
+
+@-webkit-keyframes rotation {
+  25% {
+    -webkit-transform: rotate(-2deg);
+  }
+  75% {
+    -webkit-transform: rotate(2deg);
+  }
+}

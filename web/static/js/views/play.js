@@ -22,7 +22,7 @@ class PlayView extends Component {
   }
 
   render() {
-    const { quizStatus, quiz, countdown, user } = this.props;
+    const { quizStatus, question, countdown, user } = this.props;
     const { house, year } = user;
 
     if (quizStatus === 'countingDown') {
@@ -31,19 +31,21 @@ class PlayView extends Component {
 
     return (
       <FlexContainer>
-        <HeadingPrimary house={house}
-                        type={'player'}>
-          {quiz.question}
+        <HeadingPrimary
+          house={house}
+          type={'player'}>
+          {question.body}
         </HeadingPrimary>
 
-        <HeadingSecondary house={house}
-                          type={'player'}>
+        <HeadingSecondary
+          house={house}
+          type={'player'}>
           Question 1 out of 2 &nbsp; •  &nbsp; Playing as {year}{house[0].toUpperCase()} &nbsp; • &nbsp;  0 / 1 correct
         </HeadingSecondary>
 
-        <QuestionTimer />
+        <QuestionTimer progress={question.progress} />
 
-        {quiz.answers.map((answer, i) => (
+        {question.answers.map((answer, i) => (
           <div key={i}>
             <span>{['A', 'B', 'C', 'D'][i]}</span>
             <p>{answer.body}</p>
@@ -60,7 +62,7 @@ const mapStateToProps = state => ({
   user: state.user,
   sessions: state.sessions,
   countdown: state.player.countdown,
-  quiz: state.player.quiz,
+  question: state.player.question,
   quizStatus: state.quizStatus
 });
 

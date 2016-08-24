@@ -11,21 +11,32 @@ defmodule Porfiry.EditorChannel do
   def handle_in("questions:create", %{"question" => %{"body" => body}}, socket) do
     question_params = %{quiz_id: socket.assigns.quiz_id, body: body}
 
-    question = %Question{}
-               |> Question.changeset(question_params)
-               |> Repo.insert!
+    # Create the main question entry in the db.
+    question =
+      Question.changeset(%Question{}, question_params)
+      |> Repo.insert!
 
-    answer = Enum.map(1..4, fn x ->
-               %Answer{}
-               |> Answer.changeset(%{body: "Answer #{x}", question_id: question.id})
-               |> Repo.insert!
-             end)
-             |> Enum.map(&(&1.id))
-             |> List.first
+    # Create four answers for the question, using it's id.
+    answers =
+      Enum.map(1..4, fn x ->
+        cs = %{body: "Answer #{x}",
+               question_id: question.id}
 
-    changeset = Question.changeset(question, %{correct_answer: answer})
+        Answer.changeset(%Answer{}, cs) |> Repo.insert!
+      end)
 
-    case Repo.update(changeset) do
+    # Get the id of the question's first answer.
+    first_answer =
+      answers
+      |> Enum.map(&(&1.id))
+      |> List.first
+
+    # Create a changeset setting the correct answer of
+    # `question` to `first_answer`.
+    cs = Question.changeset(question, %{correct_answer: first_answer})
+
+    # Update the question with the correct answer.
+    case Repo.update(cs) do
       {:ok, question} ->
         question = Repo.preload(question, :answers)
         view = QuestionView.render("show.json", %{question: question})
@@ -37,8 +48,7 @@ defmodule Porfiry.EditorChannel do
   end
 
   def handle_in("questions:edit", %{"id" => id, "question" => question_params}, socket) do
-    changeset = Question
-                |> Repo.get!(id)
+    changeset = Repo.get!(Question, id)
                 |> Question.changeset(question_params)
 
     case Repo.update(changeset) do
@@ -63,8 +73,7 @@ defmodule Porfiry.EditorChannel do
   end
 
   def handle_in("answers:edit", %{"id" => id, "answer" =>  answer_params}, socket) do
-    changeset = Answer
-                |> Repo.get!(id)
+    changeset = Repo.get!(Answer, id)
                 |> Answer.changeset(answer_params)
 
     case Repo.update(changeset) do
@@ -103,7 +112,6 @@ defmodule Porfiry.EditorChannel do
         {:reply, :ok, socket}
 
       {:error, changeset} ->
-        IO.inspect changeset
         {:reply, {:error, %{message: "Error saving settings"}}, socket}
     end
   end

@@ -8,7 +8,7 @@ defmodule Porfiry.QuizServer do
   import Porfiry.Endpoint, only: [broadcast!: 3]
   import Process, only: [send_after: 3]
   import Timex.DateTime, only: [now: 0]
-  alias Porfiry.{Repo, Quiz, QuizServer, QuizRegistry, QuizView, Countdown}
+  alias Porfiry.{Repo, Quiz, QuizServer, QuizRegistry, QuizView, Countdown, QuestionServer}
   require Logger
 
   defstruct id: nil, start_date: nil, quiz_data: nil, in_progress?: false, counting_down?: false
@@ -90,11 +90,24 @@ defmodule Porfiry.QuizServer do
     {:noreply, quiz}
   end
 
+  def handle_info({:update_question_timer, n}, quiz) do
+    if n >= 0 do
+      progress = n / 10
+      IO.puts(progress)
+      broadcast!("quizzes:#{quiz.id}", "update_question_timer", %{progress: progress})
+      send_after(self, {:update_question_timer, n - 1}, 1000)
+    end
+
+    {:noreply, quiz}
+  end
+
   def handle_info(:begin_quiz, quiz) do
     Logger.info("Quiz #{quiz.id} has begun")
 
     broadcast!("quizzes:#{quiz.id}", "begin_quiz", %{})
-    send_after(self, :end_quiz, 3000)
+    send_after(self, :end_quiz, 15000)
+
+    send(self, {:update_question_timer, 10})
 
     # Prevent new users joining the quiz.
     broadcast!("quizzes:lobby", "end_quiz", %{})

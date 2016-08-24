@@ -41,7 +41,7 @@ const Actions = {
       channel.on('update_question_timer', (r) => {
         dispatch({
           type: constants.UPDATE_QUESTION_TIMER,
-          payload: r.time_left
+          payload: r.progress
         });
       });
 

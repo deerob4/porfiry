@@ -37,6 +37,7 @@ const Actions = {
 
   leaveLobby(channel) {
     channel.leave();
+
     return {
       type: constants.LEAVE_LOBBY
     };
@@ -116,7 +117,7 @@ const Actions = {
     return dispatch => {
       axios.delete(`/api/quizzes/${quizId}`)
         .then(() => dispatch(Actions.fetchAllQuizzes()));
-      };
+    };
   }
 };
 

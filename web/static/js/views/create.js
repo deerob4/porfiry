@@ -15,13 +15,11 @@ import Settings from 'components/Settings';
 class EditQuiz extends Component {
   componentDidMount() {
     const { connectToEditor, socket, quiz } = this.props;
-
     connectToEditor(socket, quiz.id);
   }
 
   componentWillUnmount() {
     const { channel, leaveEditor } = this.props;
-
     leaveEditor(channel);
   }
 
@@ -44,91 +42,99 @@ class EditQuiz extends Component {
     return (
       <DocumentTitle title={`${quiz.settings.title} - Porfiry`}>
         <FlexContainer>
-          <QuestionList changeQuestion={e => {
-                          const parsed = parseInt(e.target.value);
-                          props.changeQuestion(parsed);
-                        }}
-                        currentQuestion={currentQuestion}
-                        house={user.house}
-                        questions={quiz.questions} />
+          <QuestionList
+            currentQuestion={currentQuestion}
+            house={user.house}
+            questions={quiz.questions}
+            changeQuestion={e => {
+              const parsed = parseInt(e.target.value);
+              props.changeQuestion(parsed);
+            }} />
 
-          <QuestionHeadings editQuestion={newBody => {
-                              props.editQuestion(channel, currentQuestion, newBody);
-                            }}
-                            currentQuestion={currentQuestion}
-                            house={user.house}
-                            questions={quiz.questions} />
+          <QuestionHeadings
+            editQuestion={newBody => {
+              props.editQuestion(channel, currentQuestion, newBody);
+            }}
+            currentQuestion={currentQuestion}
+            house={user.house}
+            questions={quiz.questions} />
 
-          <EditorInfo api={api}
-                    currentQuestion={currentQuestion}
-                    house={user.house}
-                    questionLength={quiz.settings.questionLength || 0}
-                    questions={quiz.questions} />
+          <EditorInfo
+            api={api}
+            currentQuestion={currentQuestion}
+            house={user.house}
+            isScheduled={quiz.settings.isScheduled}
+            questionLength={quiz.settings.questionLength || 0}
+            questions={quiz.questions} />
 
-          <QuestionAnswers answers={quiz.answers}
-                           correctAnswer={correctAnswer}
-                           currentQuestion={currentQuestion}
-                           editAnswer={(body, answerId) => {
-                             props.editAnswer(channel, answerId, body);
-                           }}
-                           house={user.house}
-                           markAnswer={(answerId) => {
-                             // Ensure the current answer can't be checked.
-                             if (answerId !== correctAnswer) {
-                               props.markAnswer(channel, currentQuestion, answerId);
-                             }
-                           }} />
+          <QuestionAnswers
+            answers={quiz.answers}
+            correctAnswer={correctAnswer}
+            currentQuestion={currentQuestion}
+            house={user.house}
+            editAnswer={(body, answerId) => props.editAnswer(channel, answerId, body)}
+            markAnswer={(answerId) => {
+              // Ensure the current answer can't be checked.
+              if (answerId !== correctAnswer) {
+                props.markAnswer(channel, currentQuestion, answerId);
+              }
+            }} />
 
           <div className="button-container button-container--create">
-            <Button className="button__Create"
-                    house={user.house}
-                    onClick={() => props.createQuestion(channel)}>
+            <Button
+              className="button__Create"
+              house={user.house}
+              onClick={() => props.createQuestion(channel)}>
               Add Question
             </Button>
 
-            <Button className="button__Create"
-                    house={user.house}
-                    onClick={() => {
-                      if (currentQuestion > quiz.questions[0].id) {
-                        props.deleteQuestion(channel, currentQuestion);
-                      }
-                    }}>
+            <Button
+              className="button__Create"
+              house={user.house}
+              onClick={() => {
+                if (currentQuestion > quiz.questions[0].id) {
+                  props.deleteQuestion(channel, currentQuestion);
+                }
+              }}>
               Delete Question
             </Button>
 
-            <Button className="button__Create"
-                    house={user.house}
-                    onClick={props.openScheduleQuiz}>
+            <Button
+              className="button__Create"
+              house={user.house}
+              onClick={props.openScheduleQuiz}>
               Schedule Quiz
             </Button>
 
-            <Button className="button__Create"
-                    house={user.house}
-                    onClick={props.openSettings}>
+            <Button
+              className="button__Create"
+              house={user.house}
+              onClick={props.openSettings}>
               Quiz Settings
             </Button>
 
-            <Button className="button__Create"
-                    house={user.house}
-                    onClick={() => browserHistory.push('/')}>
+            <Button
+              className="button__Create"
+              house={user.house}
+              onClick={() => browserHistory.push('/')}>
               Leave Editor
             </Button>
           </div>
 
-          <Settings quiz={quiz}
-                    house={user.house}
-                    updateSettings={settings => props.updateSettings(channel, settings)}
-                    closeDialog={props.closeSettings}
-                    isOpen={dialogues.settingsAreOpen} />
+          <Settings
+            quiz={quiz}
+            house={user.house}
+            updateSettings={settings => props.updateSettings(channel, settings)}
+            closeDialog={props.closeSettings}
+            isOpen={dialogues.settingsAreOpen} />
 
-          <ScheduleDialog house={user.house}
-                          startDate={quiz.settings.startDate}
-                          isScheduled={quiz.settings.isScheduled}
-                          isOpen={dialogues.scheduleQuizIsOpen}
-                          updateSchedule={(date, isScheduled) => {
-                            props.updateSchedule(channel, date, isScheduled);
-                          }}
-                          closeDialog={props.closeScheduleQuiz} />
+          <ScheduleDialog
+            house={user.house}
+            startDate={quiz.settings.startDate}
+            isScheduled={quiz.settings.isScheduled}
+            isOpen={dialogues.scheduleQuizIsOpen}
+            closeDialog={props.closeScheduleQuiz}
+            updateSchedule={(date, isScheduled) => props.updateSchedule(channel, date, isScheduled)} />
         </FlexContainer>
       </DocumentTitle>
     );

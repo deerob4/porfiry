@@ -2,7 +2,7 @@ import * as constants from '../constants';
 import { combineReducers } from 'redux';
 import nextId from 'utils/nextId';
 
-function id(state = null, action) {
+const id = (state = null, action) => {
   switch (action.type) {
     case constants.LOAD_QUIZ:
       return action.payload.id;
@@ -10,9 +10,9 @@ function id(state = null, action) {
     default:
       return state;
   }
-}
+};
 
-function currentQuestion(state = 0, action) {
+const currentQuestion = (state = 0, action) => {
   switch (action.type) {
     case constants.LOAD_QUIZ:
       return action.payload.questions[0].id;
@@ -23,9 +23,9 @@ function currentQuestion(state = 0, action) {
     default:
       return state;
   }
-}
+};
 
-function settings(state = {}, action) {
+const settings = (state = {}, action) => {
   switch (action.type) {
     case constants.LOAD_QUIZ:
       return action.payload.settings;
@@ -43,9 +43,9 @@ function settings(state = {}, action) {
     default:
       return state;
   }
-}
+};
 
-function questions(state = [], action) {
+const questions = (state = [], action) => {
   switch (action.type) {
     case constants.LOAD_QUIZ:
       return action.payload.questions.sort(q => q.id);
@@ -77,9 +77,9 @@ function questions(state = [], action) {
     default:
       return state;
   }
-}
+};
 
-function answers(state = [], action) {
+const answers = (state = [], action) => {
   switch (action.type) {
     case constants.LOAD_QUIZ:
       return action.payload.answers.sort(a => a.id);
@@ -100,7 +100,7 @@ function answers(state = [], action) {
     default:
       return state;
   }
-}
+};
 
 export default combineReducers({
   id,

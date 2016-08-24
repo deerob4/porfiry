@@ -5,7 +5,7 @@ h3 {
 }
 
 .load-quiz-blocks {
-  overflow-y: auto;
+  /*overflow-y: auto;*/
   max-height: 483px;
 }
 

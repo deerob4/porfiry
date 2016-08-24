@@ -26,23 +26,25 @@ class LobbyView extends Component {
     const { loadQuizIsOpen, loadedQuizzes } = props.dialogues;
 
     return (
-      <DocumentTitle title="Lobby - Porfiry">
+      <DocumentTitle title="Lobby - Posrfiry">
         <div className="flexbox-container">
-          <div>
+          <div className="lobby">
             <div className="animated bounceInDown">
               <h1 className={`heading--primary--${house} centre`}>
                 Priory School Quiz
               </h1>
 
-              <p className={`heading--secondary--${house } centre`}>
+              <p className={`heading--secondary--${house} centre`}>
                 Hello! Choose your house and year to get started!
               </p>
             </div>
 
             <div className="animated bounceInUp">
-              <select className={`select__Login select--${house}`}
-                      value={house}
-                      onChange={e => props.changeHouse(e.target.value)}>
+              <select
+                className={`select__Login select--${house}`}
+                value={house}
+                onChange={e => props.changeHouse(e.target.value)}>
+
                 {HOUSES.map((house, i) =>
                   <option key={i} value={house}>
                     {capitalise(house)}
@@ -50,9 +52,11 @@ class LobbyView extends Component {
                 )}
               </select>
 
-              <select className={`select__Login select--${house}`}
-                      value={year}
-                      onChange={e => props.changeYear(e.target.value)}>
+              <select
+                className={`select__Login select--${house}`}
+                value={year}
+                onChange={e => props.changeYear(e.target.value)}>
+
                 {YEARS.map((year, i) =>
                   <option key={i} value={year}>
                     {`Year ${year}`}
@@ -60,20 +64,23 @@ class LobbyView extends Component {
                 )}
               </select>
 
-              <LobbyButtons quizStatus={quizStatus}
-                            house={house}
-                            createQuiz={() => props.createQuiz()}
-                            loadQuiz={() => props.openLoadQuizDialog()}
-                            joinQuiz={() => props.joinQuiz()} />
+              <LobbyButtons
+                quizStatus={quizStatus}
+                house={house}
+                createQuiz={() => props.createQuiz()}
+                loadQuiz={() => props.openLoadQuizDialog()}
+                joinQuiz={() => props.joinQuiz()} />
             </div>
           </div>
-          <LoadQuizDialog quizzes={loadedQuizzes}
-                          isOpen={loadQuizIsOpen}
-                          api={api}
-                          house={house}
-                          fetchQuiz={quizId => props.fetchQuiz(quizId)}
-                          deleteQuiz={quizId => props.deleteQuiz(quizId)}
-                          closeDialog={() => props.closeLoadQuizDialog()} />
+
+          <LoadQuizDialog
+            quizzes={loadedQuizzes}
+            isOpen={loadQuizIsOpen}
+            api={api}
+            house={house}
+            fetchQuiz={quizId => props.fetchQuiz(quizId)}
+            deleteQuiz={quizId => props.deleteQuiz(quizId)}
+            closeDialog={() => props.closeLoadQuizDialog()} />
         </div>
       </DocumentTitle>
     );

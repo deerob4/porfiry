@@ -1,24 +1,39 @@
 'use strict';
 
-let path              = require('path');
-let webpack           = require('webpack');
-let autoprefixer      = require('autoprefixer');
+let path = require('path');
+let webpack = require('webpack');
+let autoprefixer = require('autoprefixer');
 let ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const join = dest => path.resolve(__dirname, dest);
 const web  = dest => join('web/static/' + dest);
 
+const env = process.env.MIX_ENV || 'dev';
+const prod = env === 'prod';
+const publicPath = 'http://localhost:4001/';
+const hot = `webpack-hot-middleware/client?path=${publicPath}__webpack_hmr`;
+const entry = [web('js/app.js'), web('css/app.css')];
+
+let plugins = [
+  new ExtractTextPlugin('css/app.min.css'),
+  new webpack.optimize.OccurrenceOrderPlugin(),
+  new webpack.NoErrorsPlugin(),
+  new webpack.DefinePlugin({
+    __PROD: prod,
+    __DEV: env === 'dev'
+  }),
+  new webpack.IgnorePlugin(/^\.\/locale$/, [/moment$/]),
+];
+
 let config = {
-  entry: {
-    application: [
-      web('css/app.css'),
-      web('js/app.js')
-    ]
-  },
+  // entry: [web('js/app.js'), web('css/app.css')],
+  entry: prod ? entry : ['react-hot-loader/patch', ...entry, hot],
+  devtool: prod ? null : 'cheap-module-eval-source-map',
 
   output: {
-    path: join('priv/static'),
-    filename: 'js/app.min.js'
+    path: join('priv/static/js'),
+    filename: 'app.js',
+    publicPath
   },
 
   resolve: {
@@ -57,22 +72,18 @@ let config = {
     ]
   },
 
-  plugins: [
-    new ExtractTextPlugin('css/app.min.css'),
-    // new webpack.DefinePlugin({
-    //   'process.env': {
-    //     NODE_ENV: JSON.stringify('production')
-    //   }
-    // }),
-    new webpack.IgnorePlugin(/^\.\/locale$/, [/moment$/]),
-  ],
+  plugins,
 
   postcss() {
     return [autoprefixer];
   }
 };
 
-if (process.env.MIX_ENV === 'prod') {
+if (env === 'dev') {
+  plugins.push(new webpack.HotModuleReplacementPlugin());
+}
+
+if (prod) {
   config.plugins.push(
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin({ minimize: true })

@@ -1,6 +1,6 @@
 defmodule Porfiry.QuizRegistry do
   @moduledoc """
-  Stores a list of quizzes that are currently scheduled, and contains methods
+  Stores a list of quizzes that are currently scheduled, and contains methods
   to operate on them.
   """
 
@@ -52,6 +52,7 @@ defmodule Porfiry.QuizRegistry do
   @doc "Retrieves all quizzes and sets the keys."
   def init(_) do
     schedules =
+      #
       from(q in Quiz, where: q.is_scheduled, select: %{id: q.id})
       |> Repo.all
       |> Enum.map(fn quiz ->
@@ -67,7 +68,7 @@ defmodule Porfiry.QuizRegistry do
   end
 
   def handle_call({:get_quiz, quiz_id}, _from, quizzes) do
-    {:reply, get_pid(quiz_id, quizzes), quizzes}
+    {:reply, get_pid(quizzes, quiz_id), quizzes}
   end
 
   def handle_call(:get_counting_down, _from, quizzes) do
@@ -95,7 +96,7 @@ defmodule Porfiry.QuizRegistry do
   end
 
   def handle_cast({:unschedule_quiz, quiz_id}, quizzes) do
-    QuizServer.stop get_pid(quiz_id, quizzes)
+    quizzes |> get_pid(quiz_id) |> QuizServer.stop
 
     {:noreply, Enum.filter(quizzes, &(&1.id !== quiz_id))}
   end
@@ -104,7 +105,7 @@ defmodule Porfiry.QuizRegistry do
     {:noreply, Enum.filter(quizzes, &(&1.id !== quiz_id))}
   end
 
-  defp get_pid(quiz_id, quizzes) do
+  defp get_pid(quizzes, quiz_id) do
     quizzes
     |> Enum.find(&(&1.id == quiz_id))
     |> Map.get(:pid)
